@@ -19,7 +19,7 @@ export default async function CarsPage({ searchParams }: PageProps) {
   const page = Array.isArray(pageRaw) ? pageRaw[0] : pageRaw ?? '1';
   const sort = Array.isArray(sortRaw) ? sortRaw[0] : sortRaw ?? '';
 
-  const url = new URL(`http://localhost:3000/api/cars`);
+  const url = new URL('/api/cars', process.env.NEXT_PUBLIC_API_URL);
   url.searchParams.set('_limit', '12');
   url.searchParams.set('_page', page);
   if (sort) {
