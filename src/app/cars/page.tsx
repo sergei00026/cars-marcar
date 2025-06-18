@@ -3,24 +3,21 @@ import type { Car } from '@/app/types/type';
 import { CarCard } from '@/app/components/carCard/CarCard';
 import { Pagination } from '@/app/components/pagination/Pagination';
 
-export default async function CarsPage(props: {
-  searchParams: Record<string, string | string[] | undefined>;
-}) {
-  const { searchParams } = props;
+export const dynamic = 'force-dynamic';
 
-  const pageParam = searchParams.page;
-  const page = Array.isArray(pageParam) ? pageParam[0] : pageParam ?? '1';
+export default async function CarsPage({ searchParams }: any) {
+  const pageRaw = searchParams?.page;
+  const sortRaw = searchParams?.sort;
 
-  const sortParam = searchParams.sort;
-  const sort = Array.isArray(sortParam) ? sortParam[0] : sortParam ?? '';
+  const page = Array.isArray(pageRaw) ? pageRaw[0] : pageRaw ?? '1';
+  const sort = Array.isArray(sortRaw) ? sortRaw[0] : sortRaw ?? '';
 
   const url = new URL(`http://localhost:3000/api/cars`);
-  url.searchParams.append('_limit', '12');
-  url.searchParams.append('_page', page);
-
+  url.searchParams.set('_limit', '12');
+  url.searchParams.set('_page', page);
   if (sort) {
-    url.searchParams.append('_sort', 'price');
-    url.searchParams.append('_order', sort);
+    url.searchParams.set('_sort', 'price');
+    url.searchParams.set('_order', sort);
   }
 
   const res = await fetch(url.toString(), { cache: 'no-store' });
@@ -35,7 +32,7 @@ export default async function CarsPage(props: {
           <CarCard key={car.unique_id} car={car} />
         ))}
       </div>
-      <Pagination totalPages={data.length} currentPage={+page} />
+      <Pagination totalPages={data.length} currentPage={+page} currentSort={sort} />
     </main>
   );
 }
