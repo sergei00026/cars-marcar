@@ -5,23 +5,21 @@ import { Pagination } from '@/app/components/pagination/Pagination';
 
 export const dynamic = 'force-dynamic';
 
-export default async function CarsPage({
-                                         searchParams
-                                       }: {
-  searchParams?: { [key: string]: string | string[] | undefined }
-}) {
-  // Ожидаем searchParams если это Promise
-  const resolvedSearchParams = searchParams instanceof Promise
-    ? await searchParams
-    : searchParams || {};
+interface PageProps {
+  searchParams?: Promise<Record<string, string | string[]>>;
+}
 
-  const page = Array.isArray(resolvedSearchParams?.page)
-    ? resolvedSearchParams.page[0]
-    : resolvedSearchParams?.page ?? '1';
+export default async function CarsPage(props: PageProps) {
+  // Ожидаем searchParams
+  const searchParams = await props.searchParams ?? {};
 
-  const sort = Array.isArray(resolvedSearchParams?.sort)
-    ? resolvedSearchParams.sort[0]
-    : resolvedSearchParams?.sort ?? '';
+  const page = Array.isArray(searchParams?.page)
+    ? searchParams.page[0]
+    : searchParams?.page ?? '1';
+
+  const sort = Array.isArray(searchParams?.sort)
+    ? searchParams.sort[0]
+    : searchParams?.sort ?? '';
 
   try {
     const apiUrl = new URL('https://plex-parser.ru-rating.ru/cars');
@@ -44,10 +42,8 @@ export default async function CarsPage({
       throw new Error(`API request failed with status ${res.status}`);
     }
 
-    // Убедимся, что data - массив
-    const responseData = await res.json();
-    const data = Array.isArray(responseData) ? responseData :
-      (responseData.data ? responseData.data : []);
+    const response = await res.json();
+    const data = Array.isArray(response) ? response : response?.data || [];
 
     return (
       <main className="max-w-6xl mx-auto">
