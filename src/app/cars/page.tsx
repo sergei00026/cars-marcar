@@ -3,9 +3,13 @@ import type { Car } from '@/app/types/type';
 import { CarCard } from '@/app/components/carCard/CarCard';
 import { Pagination } from '@/app/components/pagination/Pagination';
 
+interface PageProps {
+  searchParams?: { [key: string]: string | string[] | undefined };
+}
+
 export const dynamic = 'force-dynamic';
 
-export default async function CarsPage({ searchParams }: any) {
+export default async function CarsPage({ searchParams }: PageProps) {
   const pageRaw = searchParams?.page;
   const sortRaw = searchParams?.sort;
 
