@@ -5,13 +5,16 @@ import { Pagination } from '@/app/components/pagination/Pagination';
 
 export const dynamic = 'force-dynamic';
 
-export default async function CarsPage({
-                                         searchParams
-                                       }: {
-  searchParams?: { [key: string]: string | string[] | undefined };
-}) {
-  const pageRaw = searchParams?.page;
-  const sortRaw = searchParams?.sort;
+interface PageProps {
+  searchParams?: Promise<Record<string, string | string[]>>;
+}
+
+export default async function CarsPage({ searchParams }: PageProps) {
+  // Разрешаем Promise searchParams
+  const resolvedSearchParams = await searchParams ?? {};
+
+  const pageRaw = resolvedSearchParams?.page;
+  const sortRaw = resolvedSearchParams?.sort;
 
   const page = Array.isArray(pageRaw) ? pageRaw[0] : pageRaw ?? '1';
   const sort = Array.isArray(sortRaw) ? sortRaw[0] : sortRaw ?? '';
