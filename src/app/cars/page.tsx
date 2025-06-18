@@ -19,7 +19,11 @@ export default async function CarsPage({ searchParams }: PageProps) {
   const page = Array.isArray(pageRaw) ? pageRaw[0] : pageRaw ?? '1';
   const sort = Array.isArray(sortRaw) ? sortRaw[0] : sortRaw ?? '';
 
-  const url = new URL('/api/cars', process.env.NEXT_PUBLIC_API_URL);
+  const baseUrl = process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : 'http://localhost:3000';
+
+  const url = new URL('/api/cars', baseUrl);
   url.searchParams.set('_limit', '12');
   url.searchParams.set('_page', page);
   if (sort) {
