@@ -55,7 +55,7 @@ export default async function CarsPage(props: PageProps) {
           ))}
         </div>
         <Pagination
-          totalPages={Math.ceil(data.length / 12)}
+          totalPages={Math.ceil(data.length )}
           currentPage={+page}
           currentSort={sort}
         />
