@@ -1,21 +1,18 @@
-
+import { SortSelect } from '@/app/components/carCard/sortSelect/SortSelect';
 import type { Car } from '@/app/types/type';
-
 import { CarCard } from '@/app/components/carCard/CarCard';
 import { Pagination } from '@/app/components/pagination/Pagination';
 
-export const dynamic = 'force-dynamic'; //  отключаем статическую генерацию
-
 export default async function CarsPage(props: {
-  searchParams: { page?: string; sort?: 'asc' | 'desc' };
+  searchParams: Record<string, string | string[] | undefined>;
 }) {
-
-  // Важно деструктурировать props внутри тела функции
   const { searchParams } = props;
 
-  // Деструктурируем параметры после объявления функции
-  const page = searchParams?.page || '1';
-  const sort = searchParams?.sort;
+  const pageParam = searchParams.page;
+  const page = Array.isArray(pageParam) ? pageParam[0] : pageParam ?? '1';
+
+  const sortParam = searchParams.sort;
+  const sort = Array.isArray(sortParam) ? sortParam[0] : sortParam ?? '';
 
   const url = new URL(`http://localhost:3000/api/cars`);
   url.searchParams.append('_limit', '12');
@@ -31,13 +28,14 @@ export default async function CarsPage(props: {
 
   return (
     <main className="max-w-6xl mx-auto">
-      <h1>Автомобили</h1>
+      <h1 className="text-2xl font-bold mb-4">Автомобили</h1>
+      <SortSelect currentSort={sort} />
       <div className="grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-4 w-full">
         {data.map((car: Car) => (
           <CarCard key={car.unique_id} car={car} />
         ))}
       </div>
-      <Pagination totalPages={data.length} currentPage={sort ? Number(page) : 1} />
+      <Pagination totalPages={data.length} currentPage={+page} />
     </main>
   );
 }
